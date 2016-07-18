@@ -1,0 +1,3 @@
+# Override parameters for test environment.
+parameters:
+    database_name:     db_test

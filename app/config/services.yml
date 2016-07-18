@@ -1,0 +1,23 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+    app.doctrine_transactional_control:
+        class: AppBundle\Service\DoctrineTransactionControl
+        arguments: ["@doctrine.orm.default_entity_manager"]
+
+    app.transaction_control:
+        class: AppBundle\Service\AggregatedTransactionControl
+        arguments: [["@app.doctrine_transactional_control"]]
+
+    app.users:
+        class: AppBundle\Domain\Users
+        calls:
+            - [setRepo, ["@=service('doctrine.orm.default_entity_manager').getRepository('AppBundle:User')"]]
+            - [setTransactional, ["@app.transaction_control"]]
